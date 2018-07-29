@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Proyek Web Mobile</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Free HTML5 Website Template by FreeHTML5.co" />
+	<meta name="keywords" content="free website templates, free html5, free template, free bootstrap, free website template, html5, css3, mobile first, responsive" />
+	<meta name="author" content="FreeHTML5.co" />
+
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+	<!-- add to home screen-->
+	<link rel="manifest" href="/manifest.json">
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+	</head>
+	<body>
+    <div class="container">
+      <div class="fh5co-top-logo">
+        <div id="fh5co-logo"><a href="../index.html">HOME</a></div>
+      </div>
+    
+    </div>
+		
+
+    <style type='text/css'>     
+        #pesan {
+            border: 1px dashed #eee; padding: 10px;
+            color: #808080; font-family: monospace;
+        }
+    </style>
+    <link rel="stylesheet" href="css/materialize.css">
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/materialize.js"></script>
+    
+</head>
+<body>
+
+  <div class="container">
+   <div id="basic-form" class="section">
+            <div class="row">
+              <div class="col s12 m12 l5">
+                <div class="card-panel">
+                  <h5 class="header2" align="center">Form Input </h5>
+                  <div class="row">
+                    <form class="col s12" id='frmUtama'>
+                      <div class="row">
+                        <div class="input-field col s12">
+                         
+                          <input id="no" name="no" type="number" maxlength="7" required>
+                          <label for="nim">No Ring</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                          
+                          <input id="jenis" name="jenis" type="text" maxlength="50" required>
+                          <label for="jenis">Jenis</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                
+                          <input id="peternak" name="peternak" type="text" maxlength="20" >
+                          <label for="peternak">Peternak</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                        
+                          <input id="umur" name="umur" type="number" maxlength="3" >
+                          <label for="umur">Umur Beli</label>
+                        </div>
+                        <div class="row">
+                          <div class="input-field col s12">
+                              <button class="btn cyan waves-effect waves-light right" id='btnTambah' type="submit" value="Tambah">Tambah</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col s12 m12 l7">
+                  <div class="card-panel">
+                  <table class="hoverable">
+                        <thead>
+                            <tr>
+                                <th>No Ring</th>
+                                <th>Jenis</th>
+                                <th>Peternak</th>
+                                <th>Umur</th>
+                                <th></th>
+                            </tr>         
+                        </thead>
+                        <tbody id="tabel">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+       </div>
+       <div id='pesan'> </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+        var tabel = document.getElementById('tabel'),
+            no = document.getElementById('no'),
+            jenis = document.getElementById('jenis'),
+            peternak = document.getElementById('peternak'),
+            btnTambah = document.getElementById('btnTambah'),
+            form = document.getElementById('frmUtama'),
+            pesan = document.getElementById('pesan'),
+            umur = document.getElementById('umur'),
+            db;         
+ 
+        function tambahBaris(e) {
+            // Periksa apakah NIM sudah ada
+            if (tabel.rows.namedItem(no.value)) {
+                pesan.textContent = 'Error: No sudah terdaftar!';
+                e.preventDefault();
+                return;
+            }
+            // Tambah ke database
+            tambahKeDatabase({
+                no: no.value,
+                jenis: jenis.value,
+                peternak: peternak.value,
+                umur: umur.value
+            });
+ 
+            // Membuat baris baru
+            var baris = tabel.insertRow();
+            baris.id = no.value;
+            baris.insertCell().appendChild(document.createTextNode(no.value));
+            baris.insertCell().appendChild(document.createTextNode(jenis.value));
+            baris.insertCell().appendChild(document.createTextNode(peternak.value));
+            baris.insertCell().appendChild(document.createTextNode(umur.value));
+ 
+            // Membuat tombol hapus untuk setiap baris
+            var btnHapus = document.createElement('input');
+            btnHapus.type = 'button';
+            btnHapus.value = 'Hapus';
+            btnHapus.id = no.value;            
+            baris.insertCell().appendChild(btnHapus);
+ 
+            e.preventDefault();
+        }               
+ 
+        function hapusBaris(e) {
+            if (e.target.type=='button') {                
+                tabel.deleteRow(tabel.rows.namedItem(e.target.id).sectionRowIndex);
+                hapusDariDatabase(e.target.id);
+            }
+        }
+ 
+        form.addEventListener('submit', tambahBaris, false);                  
+        tabel.addEventListener('click', hapusBaris, true);            
+        function kesalahanHandler(e) {
+        pesan.innerHTML += 'Kesalahan Database: ' + e.target.errorCode + '<br>';      
+        }
+    
+        function buatDatabase() {
+            var request = window.indexedDB.open('latihan', 1);
+            request.onerror = kesalahanHandler;
+            request.onupgradeneeded = function(e) {             
+                var db = e.target.result;
+                db.onerror = kesalahanHandler;                          
+                var objectstore = db.createObjectStore('burung', { keyPath: 'no' });
+                pesan.innerHTML += 'Object store burung berhasil dibuat.<br>';
+            }
+            request.onsuccess = function(e) {           
+                db = e.target.result;
+                db.onerror = kesalahanHandler;                          
+                pesan.innerHTML += 'Berhasil melakukan koneksi ke database!<br>';
+                bacaDariDatabase();
+            }
+        }
+
+        buatDatabase();
+        
+        function cetakPesanHandler(msg) {
+            return function(e) {
+                pesan.innerHTML += msg + '<br>';
+            }
+        }
+ 
+        function buatTransaksi() {
+            var transaction = db.transaction(['burung'], 'readwrite');
+            transaction.onerror = kesalahanHandler;
+            transaction.oncomplete = cetakPesanHandler('Transaksi baru saja diselesaikan.');                  
+            return transaction;
+        }
+
+        function tambahKeDatabase(burung) {      
+            var objectstore = buatTransaksi().objectStore('burung');
+            var request = objectstore.add(burung);
+            request.onerror = kesalahanHandler;
+            request.onsuccess = cetakPesanHandler('Burung [' + burung.no + '] telah ditambahkan ke database lokal.');            
+        }
+        
+        // Menampilkan dari database
+        function bacaDariDatabase() {
+            var objectstore = buatTransaksi().objectStore('burung');
+            objectstore.openCursor().onsuccess = function(e) {
+                var result = e.target.result;
+                if (result) {
+                    pesan.innerHTML += 'Membaca burung [' + result.value.no + '] dari database.<br>';
+                    var baris = tabel.insertRow();                  
+                    baris.id = result.value.no;
+                    baris.insertCell().appendChild(document.createTextNode(result.value.no));
+                    baris.insertCell().appendChild(document.createTextNode(result.value.jenis));
+                    baris.insertCell().appendChild(document.createTextNode(result.value.peternak));
+                    baris.insertCell().appendChild(document.createTextNode(result.value.umur));
+                    var btnHapus = document.createElement('input');
+                    btnHapus.type = 'button';
+                    btnHapus.value = 'Hapus';
+                    btnHapus.id = result.value.no;         
+                    baris.insertCell().appendChild(btnHapus);
+                    result.continue();
+                }
+            }   
+        }
+        
+        // Hapus dari database
+        function hapusDariDatabase(no) {
+            var objectstore = buatTransaksi().objectStore('burung');
+            var request = objectstore.delete(no);
+            request.onerror = kesalahanHandler;
+            request.onsuccess = cetakPesanHandler('Burung [' + no + '] berhasil dihapus dari database lokal.');
+        }
+    </script>
+	
+	<footer id="fh5co-footer" role="contentinfo">
+		<div class="container">
+			<div class="row copyright">
+				<div class="col-md-12 text-center">
+					<p>
+						<small class="block">&copy; By Me 2018</small> 
+						
+					</p>
+					
+					
+				</div>
+			</div>
+
+		</div>
+	</footer>
+	</div>
+
+
+
+	</body>
+</html>
+
