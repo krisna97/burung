@@ -10,6 +10,5 @@
     "type": "image/png"
   }],
   "orientation": "portrait",
-  "scope": "./",
   "start_url": "/index.html"
 }
