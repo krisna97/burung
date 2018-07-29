@@ -4,6 +4,11 @@
   "theme_color": "#2196f3",
   "background_color": "#2196f3",
   "display": "standalone",
+    "icons": [{
+    "src": "images/logo2.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }],
   "orientation": "portrait",
   "scope": "./",
   "start_url": "/index.html"
